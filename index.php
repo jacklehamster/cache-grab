@@ -8,7 +8,17 @@ $result = $cache_grab->get_url($url);
 $last_modified_header = 'Last-Modified: ' . @$_SERVER['HTTP_IF_MODIFIED_SINCE'];
 $etag_header = 'ETag: ' . @$_SERVER['HTTP_IF_NONE_MATCH'];
 
-var_dump($result);
+foreach ($result['headers'] as $header) {
+    header($header);
+}
+foreach ($result['headers'] as $header) {
+    if ($header === $etag_header || $header === $last_modified_header) {
+        header("HTTP/1.1 304 Not Modified");
+        return;
+    }
+}
+
+echo $result['content'];
 
 class CacheGrab {
     public function get_url($url) {
