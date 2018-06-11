@@ -20,6 +20,15 @@ echo $result['content'];
 
 class CacheGrab {
     public function hello() {
+        $d = dir(self::get_temp_path());
+
+        echo "Handle: " . $d->handle . "<br>";
+        echo "Path: " . $d->path . "<br>";
+
+        while (($file = $d->read()) !== false){
+            echo "filename: " . $file . "<br>";
+        }
+        $d->close();
         return [
             'content' => 'Hello',
         ];
