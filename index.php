@@ -22,7 +22,9 @@ echo $result['content'];
 class CacheGrab {
     public function hello() {
         $d = dir(self::get_temp_path());
-        $contents = [];
+        $contents = [
+            'Cache content:'
+        ];
         while (($file = $d->read()) !== false){
             if (strrpos($file, 'cache_grab_') === 0) {
                 $split = explode('cache_grab_', $file);
@@ -44,6 +46,7 @@ class CacheGrab {
         if (!$result) {
             $seconds_to_cache = 60*60*24*2;
             $content = file_get_contents($url);
+            error_log("Fetching: $url");
             $headers = [];
 
             $ts = gmdate("D, d M Y H:i:s", time() + $seconds_to_cache) . " GMT";
