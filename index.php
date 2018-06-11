@@ -6,6 +6,7 @@ $result = $cache_grab->get_url($url);
 $last_modified_header = 'Last-Modified: ' . @$_SERVER['HTTP_IF_MODIFIED_SINCE'];
 $etag_header = 'ETag: ' . @$_SERVER['HTTP_IF_NONE_MATCH'];
 $headers = $result['headers'] ?? [];
+header('Access-Control-Allow-Origin: *');
 
 foreach ($headers as $header) {
     header($header);
@@ -79,8 +80,6 @@ class CacheGrab {
                     $headers['Content-Type'] = 'Content-Type: ' . $mime_type;
                 }
             }
-
-            $headers['Access-Control-Allow-Origin'] = 'Access-Control-Allow-Origin: *';
 
             $result = [
                 'content' => $content,
