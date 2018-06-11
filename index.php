@@ -80,6 +80,8 @@ class CacheGrab {
                 }
             }
 
+            $headers['Access-Control-Allow-Origin'] = 'Access-Control-Allow-Origin: *';
+
             $result = [
                 'content' => $content,
                 'headers' => array_values($headers),
