@@ -21,7 +21,16 @@ foreach ($result['headers'] as $header) {
 echo $result['content'];
 
 class CacheGrab {
+    public function hello() {
+        return [
+            'content' => 'Hello',
+        ];
+    }
+
     public function get_url($url) {
+        if (empty($url)) {
+            return $this->hello();
+        }
         $result = $this->get_from_cache($url);
         if (!$result) {
             $seconds_to_cache = 60*60*24*2;
