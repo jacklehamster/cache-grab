@@ -96,7 +96,7 @@ class CacheGrab {
     }
 
     private static function get_temp_path() {
-        return realpath(__DIR__."/../tmp/cache");
+        return realpath(__DIR__."/../tmp");
     }
 
     public function set(string $key, $val, int $expire) {
