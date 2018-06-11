@@ -88,7 +88,7 @@ class CacheGrab {
         $filename = urlencode($key);
         $tmp_path = self::get_temp_path();
         /** @noinspection PhpIncludeInspection */
-        @include "$tmp_path/$filename";
+        @include "$tmp_path/cache_grab_$filename";
         if(isset($expire) && $expire < time()) {
             return false;
         }
@@ -111,9 +111,9 @@ class CacheGrab {
             // Write to temp file first to ensure atomicity
             $tmp = "$tmp_path/$filename." . uniqid('', true) . '.tmp';
             file_put_contents($tmp, '<?php $val = ' . $val . '; $expire=' . $expire . ';', LOCK_EX);
-            rename($tmp, "$tmp_path/$filename");
+            rename($tmp, "$tmp_path/cache_grab_$filename");
         } else {
-            unlink("$tmp_path/$filename");
+            unlink("$tmp_path/cache_grab_$filename");
         }
     }
 
