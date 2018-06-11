@@ -26,7 +26,9 @@ class CacheGrab {
         echo "Path: " . $d->path . "<br>";
 
         while (($file = $d->read()) !== false){
-            echo "filename: " . $file . "<br>";
+            if (strrpos($file, 'cache_grab_') === 0) {
+                echo "filename: " . $file . "<br>";
+            }
         }
         $d->close();
         return [
