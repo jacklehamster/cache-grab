@@ -5,11 +5,12 @@ $cache_grab = new CacheGrab();
 $result = $cache_grab->get_url($url);
 $last_modified_header = 'Last-Modified: ' . @$_SERVER['HTTP_IF_MODIFIED_SINCE'];
 $etag_header = 'ETag: ' . @$_SERVER['HTTP_IF_NONE_MATCH'];
+$headers = $result['headers'] ?? [];
 
-foreach ($result['headers'] as $header) {
+foreach ($headers as $header) {
     header($header);
 }
-foreach ($result['headers'] as $header) {
+foreach ($headers as $header) {
     if ($header === $etag_header || $header === $last_modified_header) {
         header("HTTP/1.1 304 Not Modified");
         return;
@@ -21,18 +22,17 @@ echo $result['content'];
 class CacheGrab {
     public function hello() {
         $d = dir(self::get_temp_path());
-
-        echo "Handle: " . $d->handle . "<br>";
-        echo "Path: " . $d->path . "<br>";
-
+        $contents = [];
         while (($file = $d->read()) !== false){
             if (strrpos($file, 'cache_grab_') === 0) {
-                echo "filename: " . $file . "<br>";
+                $split = explode('cache_grab_', $file);
+                $url = urldecode($split[1]);
+                $contents[] = "<a href='$url'>$url</a>";
             }
         }
         $d->close();
         return [
-            'content' => 'Hello',
+            'content' => implode("<br>\n", $contents),
         ];
     }
 
