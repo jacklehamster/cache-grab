@@ -1,8 +1,6 @@
 <?php
 
 $url = $_REQUEST['url'] ?? '';
-$chunks = explode('/', $url);
-$url = implode('/', array_slice($chunks, 2));
 $cache_grab = new CacheGrab();
 $result = $cache_grab->get_url($url);
 $last_modified_header = 'Last-Modified: ' . @$_SERVER['HTTP_IF_MODIFIED_SINCE'];
