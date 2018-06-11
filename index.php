@@ -3,15 +3,12 @@
 $url = $_SERVER['REQUEST_URI'];
 $chunks = explode('/', $url);
 $url = implode('/', array_slice($chunks, 2));
-if (!$url) {
-    echo "Hello World";
-}
 $cache_grab = new CacheGrab();
 $result = $cache_grab->get_url($url);
 $last_modified_header = 'Last-Modified: ' . @$_SERVER['HTTP_IF_MODIFIED_SINCE'];
 $etag_header = 'ETag: ' . @$_SERVER['HTTP_IF_NONE_MATCH'];
 
-echo $result;
+var_dump($result);
 
 class CacheGrab {
     public function get_url($url) {
