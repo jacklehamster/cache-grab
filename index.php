@@ -1,6 +1,6 @@
 <?php
 
-$url = $_SERVER['REQUEST_URI'];
+$url = $_REQUEST['url'] ?? '';
 $chunks = explode('/', $url);
 $url = implode('/', array_slice($chunks, 2));
 $cache_grab = new CacheGrab();
@@ -27,7 +27,7 @@ class CacheGrab {
         ];
     }
 
-    public function get_url($url) {
+    public function get_url(string $url) {
         if (empty($url)) {
             return $this->hello();
         }
