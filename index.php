@@ -36,7 +36,7 @@ class CacheGrab {
             if (strrpos($file, 'cache_grab_') === 0) {
                 $split = explode('cache_grab_', $file);
                 $url = urldecode($split[1]);
-                $contents[] = "<a href='/{$split[1]}'>$url</a> [<a href='$url'>original</a>]";
+                $contents[] = "<a href='/$url'>$url</a> [<a href='$url'>original</a>]";
             }
         }
         $d->close();
