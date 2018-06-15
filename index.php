@@ -1,6 +1,9 @@
 <?php
 
-$url = $_REQUEST['url'] ?? '';
+$url = $_SERVER['REQUEST_URI'];
+$chunks = explode('/', $url);
+$url = implode('/', array_slice($chunks, 1)) ?? '';
+
 $cache_grab = new CacheGrab();
 $result = $cache_grab->get_url($url);
 $last_modified_header = 'Last-Modified: ' . @$_SERVER['HTTP_IF_MODIFIED_SINCE'];
@@ -22,6 +25,9 @@ echo $result['content'];
 class CacheGrab {
     public function hello() {
         $d = dir(self::get_temp_path());
+        if (!$d) {
+            return [];
+        }
         $contents = [
             'Cache content:'
         ];
