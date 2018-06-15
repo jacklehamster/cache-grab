@@ -3,6 +3,7 @@
 $url = $_SERVER['REQUEST_URI'];
 $chunks = explode('/', $url);
 $url = implode('/', array_slice($chunks, 1)) ?? '';
+$url = urldecode($url);
 
 $cache_grab = new CacheGrab();
 $result = $cache_grab->get_url($url);
