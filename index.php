@@ -65,7 +65,7 @@ class CacheGrab {
         }
 
         $contents = [
-            'Cache content:'
+            'CACHE CONTENT:',
         ];
         foreach ($keys as $url => $value) {
             $contents[] = "<a href='/$url'>$url</a> [<a href='$url'>original</a>]";
