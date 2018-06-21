@@ -142,9 +142,9 @@ class CacheGrab {
     private function get_cache_store() {
         $query = $this->db()->prepare('
           SELECT key FROM caches
-          WHERE created > NOW() - :cache_expire
+          WHERE created > NOW() - interval :cache_expire
         ');
-        $query->execute(array(':cache_expire' => self::SECONDS_TO_CACHE));
+        $query->execute(array(':cache_expire' => self::SECONDS_TO_CACHE . ' seconds'));
         return $query->fetchAll();
     }
 
