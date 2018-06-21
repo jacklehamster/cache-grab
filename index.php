@@ -159,7 +159,7 @@ class CacheGrab {
 
         $query = $this->db()->prepare("
           SELECT data FROM caches
-          WHERE key:=key 
+          WHERE key=:key 
           AND created > NOW() - interval '1 second' * :cache_expire
         ");
         $query->execute([
