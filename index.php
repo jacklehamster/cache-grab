@@ -49,25 +49,30 @@ class CacheGrab {
         if (!$d) {
             return [];
         }
-        $contents = [
-            'Cache content:'
-        ];
+        $keys = [];
         while (($file = $d->read()) !== false){
             if (strrpos($file, 'cache_grab_') === 0) {
                 $split = explode('cache_grab_', $file);
                 $url = urldecode($split[1]);
-                $contents[] = "<a href='/$url'>$url</a> [<a href='$url'>original</a>]";
+                $keys[$url] = true;
             }
         }
         $d->close();
 
         $db = $this->get_cache_store();
-        var_Dump($db);
-        exit();
+        foreach ($db as $key) {
+            $keys[$key] = true;
+        }
 
+
+        $contents = [
+            'Cache content:'
+        ];
+        foreach ($keys as $url => $value) {
+            $contents[] = "<a href='/$url'>$url</a> [<a href='$url'>original</a>]";
+        }
         return [
             'content' => implode("<br>\n", $contents),
-            'db' => $db,
         ];
     }
 
@@ -148,7 +153,7 @@ class CacheGrab {
             ':cache_expire' => self::SECONDS_TO_CACHE,
         ]);
         var_dump($result);
-        return $query->fetchAll();
+        return $query->fetchColumn();
     }
 
     private function get_from_db(string $key) {
