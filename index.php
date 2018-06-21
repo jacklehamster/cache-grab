@@ -163,7 +163,7 @@ class CacheGrab {
           AND created > NOW() - interval '1 second' * :cache_expire
         ");
         $query->execute([
-            ':id' => $key,
+            ':key' => $key,
             ':cache_expire' => self::SECONDS_TO_CACHE,
         ]);
         $query->bindColumn(1, $result, PDO::PARAM_LOB);
