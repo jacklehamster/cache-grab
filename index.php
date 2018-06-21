@@ -155,6 +155,8 @@ class CacheGrab {
     }
 
     private function get_from_db(string $key) {
+        error_log("Fetch from DB: $key");
+
         $query = $this->db()->prepare("
           SELECT data FROM caches
           WHERE key:=key 
