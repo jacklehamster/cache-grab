@@ -144,7 +144,8 @@ class CacheGrab {
           SELECT key FROM caches
           WHERE created > NOW() - interval :cache_expire
         ');
-        $query->execute(array(':cache_expire' => self::SECONDS_TO_CACHE . ' seconds'));
+        $result = $query->execute(array(':cache_expire' => self::SECONDS_TO_CACHE . ' seconds'));
+        var_dump($result);
         return $query->fetchAll();
     }
 
