@@ -158,7 +158,7 @@ class CacheGrab {
         $result = $this->db()->exec('
             CREATE TABLE IF NOT EXISTS caches (
                 key TEXT  NOT NULL PRIMARY KEY,
-                data BLOB NOT NULL,
+                data BYTEA NOT NULL,
                 created   TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
             )
         ');
