@@ -140,11 +140,11 @@ class CacheGrab {
     }
 
     private function get_cache_store() {
-        $query = $this->db()->prepare('
+        $query = $this->db()->prepare("
           SELECT key FROM caches
-          WHERE created > NOW() - interval :cache_expire
-        ');
-        $result = $query->execute(array(':cache_expire' => self::SECONDS_TO_CACHE . ' seconds'));
+          WHERE created > NOW() - interval '" . self::SECONDS_TO_CACHE . "'
+        ");
+        $result = $query->execute();
         var_dump($result);
         return $query->fetchAll();
     }
