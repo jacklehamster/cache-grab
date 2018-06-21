@@ -142,7 +142,7 @@ class CacheGrab {
         $query->execute(array(':cache_expire' => self::SECONDS_TO_CACHE));
         $query->bindColumn(1, $result, PDO::PARAM_LOB);
         $query->fetch(PDO::FETCH_BOUND);
-        return $result;
+        return json_decode($result);
     }
 
     private function set_in_db(string $key, $data) {
@@ -150,7 +150,7 @@ class CacheGrab {
         $sql = 'INSERT INTO caches(key ,data) VALUES(:key,:data)';
         $statement = $this->pdo->prepare($sql);
         $statement->bindValue(':key', $key);
-        $statement->bindValue(':data', $data);
+        $statement->bindValue(':data', json_encode($data));
         $statement->execute();
     }
 
@@ -176,12 +176,12 @@ class CacheGrab {
         return realpath($dir);
     }
 
-    public function set_cache(string $key, $val, int $expire) {
+    public function set_cache(string $key, $data, int $expire) {
         $filename = urlencode($key);
         $tmp_path = self::get_temp_path();
 
-        if ($val) {
-            $val = var_export($val, true);
+        if ($data) {
+            $val = var_export($data, true);
             $expire = var_export(time() + $expire, true);
             // HHVM fails at __set_state, so just use object cast for now
             $val = str_replace('stdClass::__set_state', '(object)', $val);
@@ -193,7 +193,7 @@ class CacheGrab {
             unlink("$tmp_path/cache_grab_$filename");
         }
 
-        $this->set_in_db($key, $val);
+        $this->set_in_db($key, $data);
     }
 
     const EXT_TO_MIMETYPE = [
