@@ -173,7 +173,7 @@ class CacheGrab {
 
     private function set_in_db(string $key, $data) {
         $this->createTables();
-        $sql = 'INSERT INTO caches(key ,data) VALUES(:key,:data)';
+        $sql = 'INSERT INTO caches(key, data) VALUES(:key,:data)';
         $statement = $this->pdo->prepare($sql);
         $statement->bindValue(':key', $key);
         $statement->bindValue(':data', json_encode($data));
@@ -183,8 +183,8 @@ class CacheGrab {
     public function createTables() {
         $result = $this->db()->exec('
             CREATE TABLE IF NOT EXISTS caches (
-                key TEXT  NOT NULL PRIMARY KEY,
-                data BYTEA NOT NULL,
+                key       TEXT NOT NULL PRIMARY KEY,
+                data      TEXT NOT NULL,
                 created   TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
             )
         ');
