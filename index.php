@@ -62,6 +62,8 @@ class CacheGrab {
         $d->close();
 
         $db = $this->get_cache_store();
+        var_Dump($db);
+        exit();
 
         return [
             'content' => implode("<br>\n", $contents),
