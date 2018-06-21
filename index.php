@@ -142,20 +142,25 @@ class CacheGrab {
     private function get_cache_store() {
         $query = $this->db()->prepare("
           SELECT key FROM caches
-          WHERE created > NOW() - interval '" . self::SECONDS_TO_CACHE . "'
+          WHERE created > NOW() - interval '1 second' * :cache_expire
         ");
-        $result = $query->execute();
+        $result = $query->execute([
+            ':cache_expire' => self::SECONDS_TO_CACHE,
+        ]);
         var_dump($result);
         return $query->fetchAll();
     }
 
     private function get_from_db(string $key) {
-        $query = $this->db()->prepare('
+        $query = $this->db()->prepare("
           SELECT data FROM caches
-          WHERE key=:key and created > NOW() - :cache_expire
-        ');
-        $query->execute(array(':id' => $key));
-        $query->execute(array(':cache_expire' => self::SECONDS_TO_CACHE));
+          WHERE key:=key 
+          AND created > NOW() - interval '1 second' * :cache_expire
+        ");
+        $query->execute([
+            ':id' => $key,
+            ':cache_expire' => self::SECONDS_TO_CACHE,
+        ]);
         $query->bindColumn(1, $result, PDO::PARAM_LOB);
         $query->fetch(PDO::FETCH_BOUND);
         return json_decode($result);
