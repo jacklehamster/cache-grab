@@ -60,6 +60,7 @@ class CacheGrab {
         $d->close();
 
         $db = $this->get_cache_store();
+        var_dump($db);
         foreach ($db as $key) {
             $keys[$key] = true;
         }
@@ -149,10 +150,9 @@ class CacheGrab {
           SELECT key FROM caches
           WHERE created > NOW() - interval '1 second' * :cache_expire
         ");
-        $result = $query->execute([
+        $query->execute([
             ':cache_expire' => self::SECONDS_TO_CACHE,
         ]);
-        var_dump($result);
         return $query->fetchColumn();
     }
 
