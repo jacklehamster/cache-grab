@@ -61,8 +61,8 @@ class CacheGrab {
 
         $db = $this->get_cache_store();
         var_dump($db);
-        foreach ($db as $key) {
-            $keys[$key] = true;
+        foreach ($db as $row) {
+            $keys[$row['key']] = true;
         }
 
 
@@ -153,7 +153,7 @@ class CacheGrab {
         $query->execute([
             ':cache_expire' => self::SECONDS_TO_CACHE,
         ]);
-        return $query->fetchColumn();
+        return $query->fetchAll();
     }
 
     private function get_from_db(string $key) {
