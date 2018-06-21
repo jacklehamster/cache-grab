@@ -60,8 +60,12 @@ class CacheGrab {
             }
         }
         $d->close();
+
+        $db = $this->get_cache_store();
+
         return [
             'content' => implode("<br>\n", $contents),
+            'db' => $db,
         ];
     }
 
@@ -131,6 +135,15 @@ class CacheGrab {
             $this->set_cache($key, $result, self::SECONDS_TO_CACHE);
         }
         return $result;
+    }
+
+    private function get_cache_store() {
+        $query = $this->db()->prepare('
+          SELECT key FROM caches
+          WHERE created > NOW() - :cache_expire
+        ');
+        $query->execute(array(':cache_expire' => self::SECONDS_TO_CACHE));
+        return $query->fetchAll();
     }
 
     private function get_from_db(string $key) {
