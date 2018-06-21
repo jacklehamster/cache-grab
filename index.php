@@ -138,7 +138,9 @@ class CacheGrab {
         $result = isset($val) ? $val : false;
         if ($result === false) {
             $result = $this->get_from_db($key);
-            $this->set_cache($key, $result, self::SECONDS_TO_CACHE);
+            if ($result) {
+                $this->set_cache($key, $result, self::SECONDS_TO_CACHE);
+            }
         }
         return $result;
     }
