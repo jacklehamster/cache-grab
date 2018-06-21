@@ -219,11 +219,11 @@ class CacheGrab {
             $tmp = "$tmp_path/$filename." . uniqid('', true) . '.tmp';
             file_put_contents($tmp, '<?php $val = ' . $val . '; $expire=' . $expire . ';', LOCK_EX);
             rename($tmp, "$tmp_path/cache_grab_$filename");
+
+            $this->set_in_db($key, $data);
         } else {
             unlink("$tmp_path/cache_grab_$filename");
         }
-
-        $this->set_in_db($key, $data);
     }
 
     const EXT_TO_MIMETYPE = [
