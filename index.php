@@ -3,7 +3,7 @@
 $url = $_SERVER['REQUEST_URI'];
 $chunks = explode('/', $url);
 $url = implode('/', array_slice($chunks, 1)) ?? '';
-$url = urldecode($url);
+//$url = urldecode($url);
 
 $cache_grab = new CacheGrab();
 $result = $cache_grab->get_url($url);
@@ -21,7 +21,7 @@ foreach ($headers as $header) {
     }
 }
 
-echo $result['content'];
+echo $result['content'] ?? '';
 
 class CacheGrab {
     public function hello() {
@@ -110,7 +110,14 @@ class CacheGrab {
     }
 
     private static function get_temp_path() {
-        return realpath(__DIR__."/../tmp");
+        $dir = sys_get_temp_dir() . '/cache-grab/tmp';
+        if (!file_exists($dir)) {
+            if (!mkdir($dir, 0777, true)) {
+                die('Failed to create folders...');
+            }
+        }
+
+        return realpath($dir);
     }
 
     public function set(string $key, $val, int $expire) {
