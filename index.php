@@ -170,9 +170,7 @@ class CacheGrab {
         ]);
         $query->bindColumn(1, $result, PDO::PARAM_LOB);
         $query->fetch(PDO::FETCH_BOUND);
-        var_dump($result);
-        exit();
-        return json_decode($result);
+        return $result ? json_decode($result) : null;
     }
 
     private function set_in_db(string $key, $data) {
