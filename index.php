@@ -60,11 +60,9 @@ class CacheGrab {
         $d->close();
 
         $db = $this->get_cache_store();
-        var_dump($db);
         foreach ($db as $row) {
             $keys[$row['key']] = true;
         }
-
 
         $contents = [
             'Cache content:'
