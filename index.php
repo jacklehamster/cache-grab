@@ -3,7 +3,6 @@
 $url = $_SERVER['REQUEST_URI'];
 $chunks = explode('/', $url);
 $url = implode('/', array_slice($chunks, 1)) ?? '';
-//$url = urldecode($url);
 
 $cache_grab = new CacheGrab();
 $result = $cache_grab->get_url($url);
@@ -24,6 +23,27 @@ foreach ($headers as $header) {
 echo $result['content'] ?? '';
 
 class CacheGrab {
+    private $pdo;
+    const SECONDS_TO_CACHE = 60*60*24*2;
+
+
+    private function db() : PDO {
+        if ($this->pdo) {
+            return $this->pdo;
+        }
+        $db = parse_url(getenv("DATABASE_URL"));
+
+        $this->pdo = new PDO("pgsql:" . sprintf(
+                "host=%s;port=%s;user=%s;password=%s;dbname=%s",
+                $db["host"],
+                $db["port"],
+                $db["user"],
+                $db["pass"],
+                ltrim($db["path"], "/")
+            ));
+        return $this->pdo;
+    }
+
     public function hello() {
         $d = dir(self::get_temp_path());
         if (!$d) {
@@ -51,15 +71,14 @@ class CacheGrab {
         }
         $result = $this->get_from_cache($url);
         if (!$result) {
-            $seconds_to_cache = 60*60*24*2;
             $content = file_get_contents($url);
             error_log("Fetching: $url");
             $headers = [];
 
-            $ts = gmdate("D, d M Y H:i:s", time() + $seconds_to_cache) . " GMT";
+            $ts = gmdate("D, d M Y H:i:s", time() + self::SECONDS_TO_CACHE) . " GMT";
             $headers['Expires'] = "Expires: $ts";
             $headers['Pragma'] = "Pragma: cache";
-            $headers['Cache-Control'] = "Cache-Control: max-age=$seconds_to_cache";
+            $headers['Cache-Control'] = "Cache-Control: max-age=" . self::SECONDS_TO_CACHE;
 
             foreach ($http_response_header as $header) {
                 if (strpos($header, 'Content-Type: ') === 0
@@ -93,7 +112,7 @@ class CacheGrab {
                 'content' => $content,
                 'headers' => array_values($headers),
             ];
-            $this->set($url, $result, $seconds_to_cache);
+            $this->set_cache($url, $result, self::SECONDS_TO_CACHE);
         }
         return $result;
     }
@@ -104,9 +123,46 @@ class CacheGrab {
         /** @noinspection PhpIncludeInspection */
         @include "$tmp_path/cache_grab_$filename";
         if(isset($expire) && $expire < time()) {
-            return false;
+            $val = false;
         }
-        return isset($val) ? $val : false;
+        $result = isset($val) ? $val : false;
+        if ($result === false) {
+            $result = $this->get_from_db($key);
+            $this->set_cache($key, $result, self::SECONDS_TO_CACHE);
+        }
+        return $result;
+    }
+
+    private function get_from_db(string $key) {
+        $query = $this->db()->prepare('
+          SELECT data FROM caches
+          WHERE key=:key and created > NOW() - :cache_expire
+        ');
+        $query->execute(array(':id' => $key));
+        $query->execute(array(':cache_expire' => self::SECONDS_TO_CACHE));
+        $query->bindColumn(1, $result, PDO::PARAM_LOB);
+        $query->fetch(PDO::FETCH_BOUND);
+        return $result;
+    }
+
+    private function set_in_db(string $key, $data) {
+        $this->createTables();
+        $sql = 'INSERT INTO caches(key ,data) VALUES(:key,:data)';
+        $statement = $this->pdo->prepare($sql);
+        $statement->bindValue(':key', $key);
+        $statement->bindValue(':data', $data);
+        $statement->execute();
+    }
+
+    public function createTables() {
+        $result = $this->db()->exec('
+            CREATE TABLE IF NOT EXISTS caches (
+                key TEXT  NOT NULL PRIMARY KEY,
+                data BLOB NOT NULL,
+                created   TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+            )
+        ');
+        return $result;
     }
 
     private static function get_temp_path() {
@@ -120,7 +176,7 @@ class CacheGrab {
         return realpath($dir);
     }
 
-    public function set(string $key, $val, int $expire) {
+    public function set_cache(string $key, $val, int $expire) {
         $filename = urlencode($key);
         $tmp_path = self::get_temp_path();
 
@@ -136,6 +192,8 @@ class CacheGrab {
         } else {
             unlink("$tmp_path/cache_grab_$filename");
         }
+
+        $this->set_in_db($key, $val);
     }
 
     const EXT_TO_MIMETYPE = [
