@@ -175,6 +175,8 @@ class CacheGrab {
     }
 
     private function set_in_db(string $key, $data) {
+        var_dump(serialize($data));
+        exit();
         $this->createTables();
         $sql = 'INSERT INTO caches(key, data) VALUES(:key, :data)';
         $statement = $this->pdo->prepare($sql);
