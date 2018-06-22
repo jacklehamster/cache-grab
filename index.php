@@ -162,7 +162,7 @@ class CacheGrab {
         error_log("FROM DB: $key");
 
         $query = $this->db()->prepare("
-          SELECT data::bytea FROM caches
+          SELECT data FROM caches
           WHERE key=:key 
           AND created > NOW() - interval '1 second' * :cache_expire
         ");
@@ -171,9 +171,7 @@ class CacheGrab {
             ':cache_expire' => self::SECONDS_TO_CACHE,
         ]);
         $data = $query->fetchColumn();
-        $content =  stream_get_contents($data);
-        var_dump($content);
-        exit();
+        return json_decode($data, true);
     }
 
     private function set_in_db(string $key, $data) {
@@ -181,7 +179,7 @@ class CacheGrab {
         $sql = 'INSERT INTO caches(key, data) VALUES(:key, :data)';
         $statement = $this->pdo->prepare($sql);
         $statement->bindValue(':key', $key);
-        $statement->bindValue(':data', $data, PDO::PARAM_LOB);
+        $statement->bindValue(':data', json_encode($data));
         $statement->execute();
     }
 
@@ -189,7 +187,7 @@ class CacheGrab {
         $result = $this->db()->exec('
             CREATE TABLE IF NOT EXISTS caches (
                 key       TEXT NOT NULL PRIMARY KEY,
-                data      BYTEA NOT NULL,
+                data      TEXT NOT NULL,
                 created   TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
             )
         ');
