@@ -171,9 +171,7 @@ class CacheGrab {
             ':cache_expire' => self::SECONDS_TO_CACHE,
         ]);
         $data = $query->fetchColumn();
-        var_dump($data);
-        exit();
-        return pg_unescape_bytea($data);
+        return stream_get_contents($data);
     }
 
     private function set_in_db(string $key, $data) {
