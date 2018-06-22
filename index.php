@@ -159,8 +159,6 @@ class CacheGrab {
     }
 
     private function get_from_db(string $key) {
-        error_log("FROM DB: $key");
-
         $query = $this->db()->prepare("
           SELECT data FROM caches
           WHERE key=:key 
@@ -171,12 +169,13 @@ class CacheGrab {
             ':cache_expire' => self::SECONDS_TO_CACHE,
         ]);
         $data = $query->fetchColumn();
+        if ($data) {
+            error_log("FROM DB: $key");
+        }
         return $data ? unserialize($data, false) : null;
     }
 
     private function set_in_db(string $key, $data) {
-        var_dump(serialize($data));
-        exit();
         $this->createTables();
         $sql = 'INSERT INTO caches(key, data) VALUES(:key, :data)';
         $statement = $this->pdo->prepare($sql);
@@ -220,7 +219,6 @@ class CacheGrab {
             $tmp = "$tmp_path/$filename." . uniqid('', true) . '.tmp';
             file_put_contents($tmp, '<?php $val = ' . $val . '; $expire=' . $expire . ';', LOCK_EX);
             rename($tmp, "$tmp_path/cache_grab_$filename");
-
             $this->set_in_db($key, $data);
         } else {
             unlink("$tmp_path/cache_grab_$filename");
