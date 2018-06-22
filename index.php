@@ -171,7 +171,7 @@ class CacheGrab {
             ':cache_expire' => self::SECONDS_TO_CACHE,
         ]);
         $data = $query->fetchColumn();
-        return json_decode($data, true);
+        return unserialize($data, false);
     }
 
     private function set_in_db(string $key, $data) {
@@ -179,7 +179,7 @@ class CacheGrab {
         $sql = 'INSERT INTO caches(key, data) VALUES(:key, :data)';
         $statement = $this->pdo->prepare($sql);
         $statement->bindValue(':key', $key);
-        $statement->bindValue(':data', json_encode($data));
+        $statement->bindValue(':data', serialize($data));
         $statement->execute();
     }
 
