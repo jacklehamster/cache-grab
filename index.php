@@ -82,7 +82,7 @@ class CacheGrab {
         $result = $this->get_from_cache($url);
         if (!$result) {
             $content = file_get_contents($url);
-            error_log("Fetching: $url");
+            error_log("FETCHING: $url");
             $headers = [];
 
             $ts = gmdate("D, d M Y H:i:s", time() + self::SECONDS_TO_CACHE) . " GMT";
@@ -141,6 +141,8 @@ class CacheGrab {
             if ($result) {
                 $this->set_cache($key, $result, self::SECONDS_TO_CACHE);
             }
+        } else {
+            error_log("FROM CACHE: $key");
         }
         return $result;
     }
@@ -157,7 +159,7 @@ class CacheGrab {
     }
 
     private function get_from_db(string $key) {
-        error_log("Fetch from DB: $key");
+        error_log("FROM DB: $key");
 
         $query = $this->db()->prepare("
           SELECT data FROM caches
