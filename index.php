@@ -172,7 +172,9 @@ class CacheGrab {
         if ($data) {
             error_log("FROM DB: $key");
         }
-        return $data ? unserialize(hex2bin($data), false) : null;
+        return $data ? unserialize(hex2bin($data), [
+            'allowed_classes' => false,
+        ]) : null;
     }
 
     private function set_in_db(string $key, $data) {
