@@ -172,7 +172,7 @@ class CacheGrab {
         if ($data) {
             error_log("FROM DB: $key");
         }
-        return $data ? unserialize($data, false) : null;
+        return $data ? unserialize(hex2bin($data), false) : null;
     }
 
     private function set_in_db(string $key, $data) {
@@ -181,12 +181,7 @@ class CacheGrab {
         $statement = $this->pdo->prepare($sql);
         $statement->bindValue(':key', $key);
         $statement->bindValue(':data', bin2hex(serialize($data)));
-        $result = $statement->execute();
-        echo "<pre>";
-        var_dump($result);
-        var_dump($key);
-        var_dump(bin2hex(serialize($data)));
-        exit();
+        $statement->execute();
     }
 
     public function createTables() {
