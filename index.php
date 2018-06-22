@@ -122,6 +122,8 @@ class CacheGrab {
                 'content' => $content,
                 'headers' => array_values($headers),
             ];
+            var_dump($result);
+            exit();
             $this->set_cache($url, $result, self::SECONDS_TO_CACHE);
         }
         return $result;
@@ -175,7 +177,7 @@ class CacheGrab {
 
     private function set_in_db(string $key, $data) {
         $this->createTables();
-        $sql = 'INSERT INTO caches(key, data) VALUES(:key,:data)';
+        $sql = 'INSERT INTO caches(key, data) VALUES(:key, :data)';
         $statement = $this->pdo->prepare($sql);
         $statement->bindValue(':key', $key);
         $statement->bindValue(':data', json_encode($data));
