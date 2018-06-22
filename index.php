@@ -122,9 +122,9 @@ class CacheGrab {
                 'content' => $content,
                 'headers' => array_values($headers),
             ];
+            $this->set_cache($url, $result, self::SECONDS_TO_CACHE);
             var_dump($result);
             exit();
-            $this->set_cache($url, $result, self::SECONDS_TO_CACHE);
         }
         return $result;
     }
