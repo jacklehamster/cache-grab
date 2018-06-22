@@ -171,7 +171,7 @@ class CacheGrab {
             ':cache_expire' => self::SECONDS_TO_CACHE,
         ]);
         $data = $query->fetchColumn();
-        return unserialize($data, false);
+        return $data ? unserialize($data, false) : null;
     }
 
     private function set_in_db(string $key, $data) {
