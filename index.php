@@ -180,12 +180,12 @@ class CacheGrab {
         $sql = 'INSERT INTO caches(key, data) VALUES(:key, :data)';
         $statement = $this->pdo->prepare($sql);
         $statement->bindValue(':key', $key);
-        $statement->bindValue(':data', serialize($data));
+        $statement->bindValue(':data', bin2hex(serialize($data)));
         $result = $statement->execute();
         echo "<pre>";
         var_dump($result);
         var_dump($key);
-        var_dump(serialize($data));
+        var_dump(bin2hex(serialize($data)));
         exit();
     }
 
