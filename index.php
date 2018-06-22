@@ -172,7 +172,7 @@ class CacheGrab {
         ]);
         $query->bindColumn(1, $result, PDO::PARAM_LOB);
         $query->fetch(PDO::FETCH_BOUND);
-        return $result;
+        return pg_unescape_bytea($result);
     }
 
     private function set_in_db(string $key, $data) {
