@@ -172,7 +172,7 @@ class CacheGrab {
         ]);
         $query->bindColumn(1, $result, PDO::PARAM_LOB);
         $query->fetch(PDO::FETCH_BOUND);
-        return $result ? json_decode($result) : null;
+        return $result;
     }
 
     private function set_in_db(string $key, $data) {
@@ -180,7 +180,7 @@ class CacheGrab {
         $sql = 'INSERT INTO caches(key, data) VALUES(:key, :data)';
         $statement = $this->pdo->prepare($sql);
         $statement->bindValue(':key', $key);
-        $statement->bindValue(':data', json_encode($data));
+        $statement->bindValue(':data', $data, PDO::PARAM_LOB);
         $statement->execute();
     }
 
@@ -188,7 +188,7 @@ class CacheGrab {
         $result = $this->db()->exec('
             CREATE TABLE IF NOT EXISTS caches (
                 key       TEXT NOT NULL PRIMARY KEY,
-                data      TEXT NOT NULL,
+                data      BYTEA NOT NULL,
                 created   TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
             )
         ');
