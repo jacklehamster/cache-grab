@@ -162,7 +162,7 @@ class CacheGrab {
         error_log("FROM DB: $key");
 
         $query = $this->db()->prepare("
-          SELECT data FROM caches
+          SELECT data::bytea FROM caches
           WHERE key=:key 
           AND created > NOW() - interval '1 second' * :cache_expire
         ");
@@ -170,9 +170,8 @@ class CacheGrab {
             ':key' => $key,
             ':cache_expire' => self::SECONDS_TO_CACHE,
         ]);
-        $query->bindColumn(1, $result, PDO::PARAM_LOB);
-        $query->fetch(PDO::FETCH_BOUND);
-        return pg_unescape_bytea($result);
+        $data = $query->fetchColumn();
+        return pg_unescape_bytea($data);
     }
 
     private function set_in_db(string $key, $data) {
