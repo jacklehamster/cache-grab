@@ -181,7 +181,7 @@ class CacheGrab {
         $statement = $this->pdo->prepare($sql);
         echo "<pre>";
         var_dump($key);
-        var_dump($data);
+        var_dump(serialize($data));
         exit();
         $statement->bindValue(':key', $key);
         $statement->bindValue(':data', serialize($data));
