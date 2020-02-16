@@ -69,7 +69,7 @@ class CacheGrab {
 
         $contents = [
             'Enter URL: ',
-            '<input id="url" style="width: 400px" onkeyup="location=this.location.href + this.value;">',
+            '<input id="url" style="width: 400px" onkeyup="if (event.keyCode===32) location=this.location.href + this.value;">',
             'CACHE CONTENT:',
         ];
         foreach ($keys as $url => $value) {
