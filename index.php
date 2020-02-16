@@ -13,11 +13,14 @@ $headers = $result['headers'] ?? [];
 foreach ($headers as $header) {
     header($header);
 }
-foreach ($headers as $header) {
-    if ($header === $etag_header || $header === $last_modified_header) {
-        header("HTTP/1.1 304 Not Modified");
-        return;
-    }
+
+if (!empty($url)) {
+  foreach ($headers as $header) {
+      if ($header === $etag_header || $header === $last_modified_header) {
+          header("HTTP/1.1 304 Not Modified");
+          return;
+      }
+  }
 }
 
 echo $result['content'] ?? '';
