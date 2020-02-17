@@ -74,7 +74,7 @@ class CacheGrab {
             'CACHE CONTENT:',
         ];
         foreach ($keys as $url => $value) {
-            $contents[] = "<a href='/$url'>$url</a> [<a href='$url'>original</a>]";
+            $contents[] = "<img src='/$url' style='width: 50px;'><a href='/$url'>$url</a> [<a href='$url'>original</a>]";
         }
         return [
             'content' => implode("<br>\n", $contents),
