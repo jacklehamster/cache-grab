@@ -1,5 +1,11 @@
 # cache-grab
 Use proxy to grab and cache data.
+
+- Step 1: Pass a public URL to an image or media.
+- Step 2: Reuse that URL. You get the same thing as the public URL except now you'll be hitting a proxy instead of the original URL.
+
+This is meant to either speed up things, or bypass limit sometimes imposed by some services.
+
 PHP
 
 Usage:
